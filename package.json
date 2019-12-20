@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js",
+    "start": "nodemon app.js",
     "start-server": "node app.js"
   },
   "repository": {
@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/taruncx101/node_js_basic/issues"
   },
-  "homepage": "https://github.com/taruncx101/node_js_basic#readme"
+  "homepage": "https://github.com/taruncx101/node_js_basic#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
 }
