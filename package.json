@@ -20,5 +20,8 @@
   "homepage": "https://github.com/taruncx101/node_js_basic#readme",
   "devDependencies": {
     "nodemon": "^2.0.2"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
   }
 }
