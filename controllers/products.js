@@ -22,13 +22,15 @@ exports.getProducts = (req, res, next) => {
     // console.log(adminData.products)
     // res.sendFile(path.join(rootDir, 'views','shop.html'));
     // const products = adminData.products;
-    const products = Product.fetchAllproducts();
-    res.render('shop', {
-        prods: products,
-        pageTitle: 'Shop',
-        path: '/',
-        hasProducts: products.length > 0,
-        activeShop: true,
-        productCss: true,
-    })
+    Product.fetchAllproducts((products)=>{
+        res.render('shop', {
+            prods: products,
+            pageTitle: 'Shop',
+            path: '/',
+            hasProducts: products.length > 0,
+            activeShop: true,
+            productCss: true,
+        })
+    });
+    
 }

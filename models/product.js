@@ -22,15 +22,15 @@ module.exports = class Product {
         });
         // products.push(this)
     }
-    static fetchAllproducts(){
+    static fetchAllproducts(cb){
         const p = path.join(rootDir,'data', 'products.json')
         let products = [];
         fs.readFile(p, (err, fileContent) => {
             if(!err){
-                return JSON.parse(fileContent)
+                cb(JSON.parse(fileContent))
             } 
-            return [];
+            cb([]);
         });
-        return products;
+        // return products;
     }
 }
