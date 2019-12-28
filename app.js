@@ -11,6 +11,8 @@ const rootDir = require('./utils/path');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 
+const errorController = require('./controllers/error')
+
 const app = express();
 
 
@@ -31,11 +33,6 @@ app.use(shopRoutes);
 
 //for 404 page
 
-app.use('/', (req, res, next) => {
-    // res.status(404).sendFile(path.join(rootDir, 'views', '404.html'));
-    res.status(404).render('404', {
-        pageTitle: 'Page Not Found'
-    });
-});
+app.use('/',errorController.get404);
 
 app.listen(3000);
