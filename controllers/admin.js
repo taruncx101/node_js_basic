@@ -17,20 +17,3 @@ exports.postAddProduct = (req, res, next) => {
     product.save();
     res.redirect('/');
 }
-
-exports.getProducts = (req, res, next) => {
-    // console.log(adminData.products)
-    // res.sendFile(path.join(rootDir, 'views','shop.html'));
-    // const products = adminData.products;
-    Product.fetchAllproducts((products)=>{
-        res.render('shop/product-list', {
-            prods: products,
-            pageTitle: 'Shop',
-            path: '/',
-            hasProducts: products.length > 0,
-            activeShop: true,
-            productCss: true,
-        })
-    });
-    
-}
