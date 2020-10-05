@@ -11,7 +11,7 @@ const products = [];
 // =>get requests
 router.get('/add-product', adminController.getAddProduct);
 
-router.get('/products', adminController.getAddProduct);
+router.get('/products', adminController.getProducts);
 
 // =>post requests
 router.post('/add-product', adminController.postAddProduct);

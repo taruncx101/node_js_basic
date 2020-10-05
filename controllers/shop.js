@@ -1,16 +1,10 @@
 const Product = require('../models/product');
 exports.getProducts = (req, res, next) => {
-    // console.log(adminData.products)
-    // res.sendFile(path.join(rootDir, 'views','shop.html'));
-    // const products = adminData.products;
     Product.fetchAllproducts((products)=>{
         res.render('shop/product-list', {
             prods: products,
-            pageTitle: 'Shop',
-            path: '/product-list',
-            hasProducts: products.length > 0,
-            activeShop: true,
-            productCss: true,
+            pageTitle: 'All Products',
+            path: '/products',
         })
     });
     
@@ -22,23 +16,20 @@ exports.getIndex = (req, res, next) => {
             prods: products,
             pageTitle: 'Shop',
             path: '/',
-            hasProducts: products.length > 0,
-            activeShop: true,
-            productCss: true,
         })
     });
 
 }
 exports.getCart = (req, res, next) => {
-    Product.fetchAllproducts((products)=>{
-        res.render('shop/cart', {
-            prods: products,
-            pageTitle: 'Shop',
-            path: '/',
-            hasProducts: products.length > 0,
-            activeShop: true,
-            productCss: true,
-        })
-    });
-
+        res.render("shop/cart", {
+          pageTitle: "Your Cart",
+          path: "/cart",
+        });
 }
+
+exports.getCheckout = (req, res, next) => {
+        res.render("shop/checkout", {
+          pageTitle: "Checkout",
+          path: "/checkout",
+        });
+};
