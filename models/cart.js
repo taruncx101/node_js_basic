@@ -9,7 +9,7 @@ module.exports = class Cart {
     static addProduct(id, productPrice) {
         // fetch the previous cart
         fs.readFile(p, (err, fileContent) => {
-          let cart = { products: [], totoalPrice: 0 };
+          let cart = { products: [], totalPrice: 0 };
           if (!err) {
             cart = JSON.parse(fileContent);
           }
@@ -29,7 +29,7 @@ module.exports = class Cart {
             updatedProduct = { id: id, qty: 1 };
             cart.products = [...cart.products, updatedProduct];
           }
-          cart.totalPrice = cart.totoalPrice + +productPrice;
+          cart.totalPrice = cart.totalPrice + +productPrice;
           fs.writeFile(p, JSON.stringify(cart), (err) => {
             console.log(err);
           });
@@ -54,5 +54,18 @@ module.exports = class Cart {
       }
       
     })
+  }
+
+  static getCart(cb) {
+    fs.readFile(p, (err, fileContent) => {
+      if (err) {
+        cb(null)
+      }
+      else {
+        const cart = JSON.parse(fileContent);
+        cb(cart)
+      }
+      
+    });
   }
 }

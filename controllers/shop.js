@@ -33,10 +33,24 @@ exports.getIndex = (req, res, next) => {
 
 }
 exports.getCart = (req, res, next) => {
+  Cart.getCart(cart => {
+    Product.fetchAllproducts(products => {
+      const cartProducts = [];
+      for (product of products) {
+        const cartProductData = cart.products.find(prod => prod.id === product.id);
+        if (cartProductData) {
+          console.log(cart);
+          cartProducts.push({ productData: product, qty: cartProductData.qty });
+        }
+      }
         res.render("shop/cart", {
           pageTitle: "Your Cart",
           path: "/cart",
+          products: cartProducts,
         });
+      })
+  })
+
 }
 
 exports.postCart = (req, res, next) => {
