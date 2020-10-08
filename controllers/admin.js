@@ -38,28 +38,44 @@ exports.getEditProduct = (req, res, next) => {
     res.redirect('/')
   }
   const prodId = req.params.productId;
-  Product.findById(prodId, product => {
-    if (!product) {
-      //return res.redirect("/");
-    }
-    res.render("admin/edit-product", {
-      pageTitle: "Edit Product",
-      path: "/admin/products",
-      editing: editMode,
-      product: product,
-    });
-  })
-
+    Product.findByPk(prodId)
+      .then((product) => {
+            if (!product) {
+              return res.redirect("/");
+            }
+          res.render("admin/edit-product", {
+            pageTitle: "Edit Product",
+            path: "/admin/products",
+            editing: editMode,
+            product: product,
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 };
 exports.postEditProduct = (req, res, next) => {
       const prodId = req.body.productId;
       const title = req.body.title;
       const imageUrl = req.body.imageUrl;
       const price = req.body.price;
-      const desciption = req.body.desciption;
-      const product = new Product(prodId, title, imageUrl, desciption, price);
-      product.save();
-      res.redirect("/");
+      const description = req.body.description;
+          Product.findByPk(prodId)
+            .then((product) => {
+              product.title = title;
+              product.price = price;
+              product.description = description;
+              product.imageUrl = imageUrl;
+              return product.save();
+            })
+            .then(result => {
+              console.log('product updated');
+               res.redirect("/admin/products");
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+      
 }
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
@@ -67,11 +83,15 @@ exports.postDeleteProduct = (req, res, next) => {
   res.redirect("/admin/products");
 };
 exports.getProducts = (req, res, next) => {
-  Product.fetchAllproducts((products) => {
-    res.render("admin/products", {
-      prods: products,
-      pageTitle: "Admin Products",
-      path: "/admin/products",
-    });
-  });
+      Product.findAll()
+        .then((products) => {
+          res.render("admin/products", {
+            prods: products,
+            pageTitle: "Admin Products",
+            path: "/admin/products",
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
 };
