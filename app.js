@@ -6,9 +6,7 @@ const bodyParser = require('body-parser');
 
 const rootDir = require('./utils/path');
 
-
-const db = require("./utils/database");
-
+const sequelize = require("./utils/database");
 
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
@@ -17,13 +15,6 @@ const errorController = require("./controllers/error");
 
 const app = express();
 
-db.execute('SELECT * FROM products')
-    .then((result) => {
-        //console.log(result)
-    })
-    .catch((err) => {
-        console.log(err)
-    });
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -39,6 +30,15 @@ app.use(shopRoutes);
 
 //for 404 page
 
-app.use('/',errorController.get404);
+app.use('/', errorController.get404);
 
-app.listen(3001);
+sequelize
+    .sync()
+    .then(result => {
+        //console.log(result);
+        app.listen(3001);
+    })
+    .catch(err => {
+    console.log(err);
+});
+

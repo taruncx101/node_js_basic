@@ -32,8 +32,8 @@ exports.getProduct = (req, res, next) => {
 
 };
 exports.getIndex = (req, res, next) => {
-  Product.fetchAllproducts()
-    .then(([products, fileData]) => {
+  Product.findAll()
+    .then((products)=> {
               res.render("shop/index", {
                 prods: products,
                 pageTitle: "Shop",
