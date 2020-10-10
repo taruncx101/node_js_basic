@@ -1,6 +1,8 @@
+const { request } = require("express");
 const Product = require('../models/product');
 const Cart = require('../models/cart');
-const { request } = require('express');
+const Order = require('../models/order');
+
 exports.getProducts = (req, res, next) => {
     Product.findAll()
       .then((products) => {
@@ -104,12 +106,35 @@ exports.postCartDeleteProduct = (req, res, next) => {
       const product = products[0];
       return product.cartItem.destroy();
     })
-    .then((result) => {
+    .then(() => {
       res.redirect("/cart");
     })
     .catch((err) => console.log(err));
 
 };
+
+exports.postOrder = (req, res, next) => { 
+  req.user
+    .getCart()
+    .then(cart => {
+      return cart.getProducts();
+    })
+    .then(products => {
+      return req.user
+        .createOrder()
+        .then((order) => {
+          order.addProducts(products.map(product => {
+            product.orderItem = { quantity: product.cartItem.quantity }
+            return product;
+          }));
+        })
+        .catch((err) => console.log(err));
+    })
+    .then(() => {
+      res.redirect('/orders');
+    })
+    .catch((err) => console.log(err));
+}
 
 exports.getOrders = (req, res, next) => {
   res.render("shop/orders", {
