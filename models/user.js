@@ -64,6 +64,23 @@ class User {
       })
       .catch((err) => console.log(err));
   }
+  deleteItemFromcart(prodId) {
+       const cartProductIndex = this.cart.items.findIndex((cp) => {
+         return cp.productId.toString() === prodId.toString();
+       });
+    let updatedCartItems = [...this.cart.items];
+    updatedCartItems = updatedCartItems.filter(o => o.productId.toString() !== prodId.toString());
+    const updatedCart = {
+      items: updatedCartItems,
+    };
+       const db = getDb();
+       return db.collection("users").updateOne(
+         { _id: new ObjectId(this._id) },
+         {
+           $set: { cart: updatedCart },
+         }
+       );
+  }
   static findById(userId) {
     const db = getDb();
     return db.collection("users")
