@@ -17,10 +17,24 @@ class User {
     .catch(err => console.log(err))
   }
   addToCart(product) {
-    // const cartProduct = this.cart.items.findIndex(cp => {
-    //   return cp._id === product._id
-    // })
-    const updatedCart = { items: [{ product_id: new ObjectId(product._id), quantity: 1 }] }
+    const cartProductIndex = this.cart.items.findIndex(cp => {
+      return cp.productId.toString() === product._id.toString();
+    })
+    const updatedCartItems = [...this.cart.items]
+    let quantity = 1;
+    if (cartProductIndex >= 0) {
+      quantity = quantity + +updatedCartItems[cartProductIndex].quantity;
+      updatedCartItems[cartProductIndex].quantity = quantity;
+    }
+    else {
+      updatedCartItems.push({
+        productId: new ObjectId(product._id),
+        quantity,
+      });
+    }
+    const updatedCart = {
+      items: updatedCartItems
+    }
     const db = getDb();
     return db.collection('users')
       .updateOne(
