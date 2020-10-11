@@ -9,16 +9,16 @@ const { Router } = require('express');
 
 const products = [];
 
-// // =>get requests
-// router.get('/add-product', adminController.getAddProduct);
+// =>get requests
+router.get('/add-product', adminController.getAddProduct);
 
 // router.get('/products', adminController.getProducts);
 
 // router.get("/edit-product/:productId", adminController.getEditProduct);
 
 // router.post("/edit-product", adminController.postEditProduct);
-// // // =>post requests
-// router.post('/add-product', adminController.postAddProduct);
+// // =>post requests
+router.post('/add-product', adminController.postAddProduct);
 
 // router.post("/delete-product", adminController.postDeleteProduct);
 
