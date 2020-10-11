@@ -20,6 +20,6 @@ router.post("/edit-product", adminController.postEditProduct);
 // // =>post requests
 router.post('/add-product', adminController.postAddProduct);
 
-// router.post("/delete-product", adminController.postDeleteProduct);
+router.post("/delete-product", adminController.postDeleteProduct);
 
 module.exports= router;
