@@ -4,6 +4,7 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const session = require('express-session');
 
 const rootDir = require('./utils/path');
 
@@ -27,13 +28,18 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 app.use(express.static(path.join(rootDir, 'public')))
 
+app.use(
+  session({ secret: "my secret", resave: false, saveUninitialized: false })
+);
+
 app.use((req, res, next) => {
-    User.findById("5f82e96b9986183cd0d4496c")
-      .then((user) => {
-        req.user =user
-        next();
-      })
-      .catch((err) => console.log(err));;
+  req.isLoggedIn = req.session.isLoggedIn;
+  User.findById("5f82e96b9986183cd0d4496c")
+    .then((user) => {
+      req.user = user;
+      next();
+    })
+    .catch((err) => console.log(err));
 })
 
 app.use('/admin', adminRoutes);
