@@ -45,15 +45,15 @@ app.use(
   })
 );
 
-app.use((req, res, next) => {
-  req.isLoggedIn = req.session.isLoggedIn;
-  User.findById("5f82e96b9986183cd0d4496c")
-    .then((user) => {
-      req.user = user;
-      next();
-    })
-    .catch((err) => console.log(err));
-})
+// app.use((req, res, next) => {
+//   req.isLoggedIn = req.session.isLoggedIn;
+//   User.findById("5f82e96b9986183cd0d4496c")
+//     .then((user) => {
+//       req.user = user;
+//       next();
+//     })
+//     .catch((err) => console.log(err));
+// })
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
