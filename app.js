@@ -5,6 +5,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
+const MongoDBSession = require('connect-mongodb-session')(session);
 
 const rootDir = require('./utils/path');
 
@@ -17,7 +18,14 @@ const errorController = require("./controllers/error");
 
 const User = require('./models/user')
 
+const MONGODB_URI = "mongodb+srv://codelogicx101:codelogicx101@cluster0.raryu.mongodb.net/shop";
+
 const app = express();
+
+const store = new MongoDBSession({
+  uri: MONGODB_URI,
+  collection: 'sessions',
+});
 
 
 app.set('view engine', 'ejs');
@@ -29,7 +37,12 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(path.join(rootDir, 'public')))
 
 app.use(
-  session({ secret: "my secret", resave: false, saveUninitialized: false })
+  session({
+    secret: "my secret",
+    resave: false,
+    saveUninitialized: false,
+    store: store
+  })
 );
 
 app.use((req, res, next) => {
@@ -51,31 +64,27 @@ app.use(authRoutes);
 app.use('/', errorController.get404);
 
 mongoose
-  .connect(
-    "mongodb+srv://codelogicx101:codelogicx101@cluster0.raryu.mongodb.net/shop?retryWrites=true&w=majority",
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    }
-  )
-  .then((result) => {
-    User.findOne()
-      .then(user => {
-        if (!user) {
-              const user = new User({
-                name: "Tarun",
-                email: "tarunkumar@codelogicx.com",
-                cart: {
-                  items: [],
-                },
-              });
-          return user.save();
-        }
-      })
+  .connect(MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
   })
-  .then(result => {
-        console.log("connected");
-        app.listen(3001);
+  .then((result) => {
+    User.findOne().then((user) => {
+      if (!user) {
+        const user = new User({
+          name: "Tarun",
+          email: "tarunkumar@codelogicx.com",
+          cart: {
+            items: [],
+          },
+        });
+        return user.save();
+      }
+    });
+  })
+  .then((result) => {
+    console.log("connected");
+    app.listen(3001);
   })
   .catch((err) => console.log(err));
 
