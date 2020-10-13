@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBSession = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
+const flash = require('connect-flash');
 
 const rootDir = require('./utils/path');
 
@@ -46,6 +47,7 @@ app.use(
   })
 );
 app.use(csrfProtection);
+app.use(flash());
 
 // app.use((req, res, next) => {
 //   req.isLoggedIn = req.session.isLoggedIn;
@@ -70,7 +72,7 @@ app.use((req, res, next) => {
 })
 
 app.use((req, res, next) => {
-  res.locals.isAuthenticaated = req.session.isLoggedIn;
+  res.locals.isAuthenticated = req.session.isLoggedIn;
   res.locals.csrfToken = req.csrfToken();
   next();
 })
