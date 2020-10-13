@@ -81,20 +81,6 @@ mongoose
     useUnifiedTopology: true,
   })
   .then((result) => {
-    User.findOne().then((user) => {
-      if (!user) {
-        const user = new User({
-          name: "Tarun",
-          email: "tarunkumar@codelogicx.com",
-          cart: {
-            items: [],
-          },
-        });
-        return user.save();
-      }
-    });
-  })
-  .then((result) => {
     console.log("connected");
     app.listen(3001);
   })
