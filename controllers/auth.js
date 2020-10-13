@@ -1,3 +1,4 @@
+const crypto = require('crypto')
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const sendgridTransport = require('nodemailer-sendgrid-transport');
@@ -37,6 +38,20 @@ exports.getSignup = (req, res, next) => {
   res.render("auth/signup", {
     path: "/signup",
     pageTitle: "Signup",
+    errorMessage: message,
+  });
+};
+
+exports.getResetPassword = (req, res, next) => {
+  let message = req.flash("error");
+  if (message.length > 0) {
+    message = message[0];
+  } else {
+    message = null;
+  }
+  res.render("auth/reset", {
+    path: "/reset-password",
+    pageTitle: "Reset Password",
     errorMessage: message,
   });
 };
@@ -108,7 +123,7 @@ exports.postSignup = (req, res, next) => {
             res.redirect("/");
               return traansporter.sendMail({
                 to: email,
-                from: "node@comple.com",
+                from: "node@js.com",
                 subject: "Signup succeeded!",
                 html: "<h1> You successfully signed up!</h1>",
               });
@@ -119,6 +134,38 @@ exports.postSignup = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
+exports.postResetPassword = (req, res, next) => {
+  crypto.randomBytes(32, (err, buffer) => {
+    if (err) {
+      console.log(err)
+      return res.redirect('/reset-password');
+    }
+    const token = buffer.toString('hex');
+    User.findOne({ email: req.body.email })
+      .then(user => {
+        if (!user) {
+          req.flash('error', 'No account with that email found.')
+           return res.redirect("/reset-password");
+        }
+        user.resetToken = token;
+        user.resetTokenExpiration = Date.now() + 3600000;
+        return user.save();
+      })
+      .then(result => {
+          res.redirect('/');
+          traansporter.sendMail({
+            to: req.body.email,
+            from: "node@js.com",
+            subject: "Password Reset",
+            html: `
+            <p >You requested a pssword reset.</p>
+            <p >Click this <a href = "http://localhost:3001/reset-password/${token}">link</a> to set a new password.</p>
+            `,
+          });
+      })
+      .catch((err) => console.log(err));
+  });
+};
 exports.postLogout = (req, res, next) => {
   req.session.destroy(err => {
     console.log(err);
