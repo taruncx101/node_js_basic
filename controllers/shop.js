@@ -9,7 +9,7 @@ exports.getProducts = (req, res, next) => {
           prods: products,
           pageTitle: "All Products",
           path: "/products",
-          isAuthenticated: req.session.user,
+          isAuthenticated: req.user,
         });
       })
       .catch((err) => {
@@ -26,7 +26,7 @@ exports.getProduct = (req, res, next) => {
       product: product,
       pageTitle: product.title,
       path: "/products",
-      isAuthenticated: req.session.user,
+      isAuthenticated: req.user,
     });
     })
     .catch((err) => {
@@ -41,7 +41,7 @@ exports.getIndex = (req, res, next) => {
                 prods: products,
                 pageTitle: "Shop",
                 path: "/",
-                isAuthenticated: req.session.user,
+                isAuthenticated: req.user,
               });
     })
     .catch(err => {
@@ -50,7 +50,7 @@ exports.getIndex = (req, res, next) => {
 
 }
 exports.getCart = (req, res, next) => {
-  req.session.user
+  req.user
     .populate('cart.items.productId')
     .execPopulate()
     .then(user => {
@@ -59,7 +59,7 @@ exports.getCart = (req, res, next) => {
           pageTitle: "Your Cart",
           path: "/cart",
           products: products,
-          isAuthenticated: req.session.user,
+          isAuthenticated: req.user,
         });
     })
     .catch((err) => console.log(err));
@@ -69,7 +69,7 @@ exports.postCart = (req, res, next) => {
   const prodId = req.body.productId;
   Product.findById(prodId)
     .then(product => {
-      return req.session.user.addToCart(product);
+      return req.user.addToCart(product);
     })
     .then((result) => {
       console.log(result);
@@ -80,7 +80,7 @@ exports.postCart = (req, res, next) => {
 
 exports.postCartDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  req.session.user
+  req.user
     .deleteItemFromcart(prodId)
     .then(() => {
       res.redirect("/cart");
@@ -90,7 +90,7 @@ exports.postCartDeleteProduct = (req, res, next) => {
 };
 
 exports.postOrder = (req, res, next) => { 
-  req.session.user
+  req.user
     .populate("cart.items.productId")
     .execPopulate()
     .then((user) => {
@@ -100,8 +100,8 @@ exports.postOrder = (req, res, next) => {
       console.log(products);
       const order = new Order({
         user: {
-          name: req.session.user.name,
-          userId: req.session.user._id,
+          name: req.user.name,
+          userId: req.user._id,
         },
         products: products,
       });
