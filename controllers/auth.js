@@ -40,7 +40,8 @@ exports.getSignup = (req, res, next) => {
     path: "/signup",
     pageTitle: "Signup",
     errorMessage: message,
-    oldInput: {}
+    oldInput: {},
+    validationErrors: [],
   });
 };
 
@@ -133,8 +134,9 @@ exports.postSignup = (req, res, next) => {
       path: "/signup",
       pageTitle: "Signup",
       errorMessage: message[0].msg,
-      oldInput: {email, password, confirmPassword}
-    })
+      oldInput: { email, password, confirmPassword },
+      validationErrors: errors.array(),
+    });
   }
      bcrypt
         .hash(password, 12)
