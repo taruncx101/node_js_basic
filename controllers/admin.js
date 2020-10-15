@@ -2,18 +2,28 @@ const mongodb = require('mongodb')
 const Product = require('../models/product');
 exports.getAddProduct = (req, res, next) => {
     // res.sendFile(path.join(rootDir,'views','add-product.html'));
-    res.render('admin/edit-product', {
-        pageTitle: 'Add Product',
-        path: '/admin/add-product',
-        editing: false,
-    })
+    res.render("admin/edit-product", {
+      pageTitle: "Add Product",
+      path: "/admin/add-product",
+      editing: false,
+      errorMessage: '',
+    });
 }
 
 exports.postAddProduct = (req, res, next) => {
     const title = req.body.title; 
-    const imageUrl = req.body.imageUrl; 
+    const image = req.file; 
     const price = req.body.price; 
-    const description = req.body.description; 
+  const description = req.body.description; 
+  if (!image) {
+    return res.render("admin/edit-product", {
+      pageTitle: "Add Product",
+      path: "/admin/add-product",
+      editing: false,
+      errorMessage: 'Attached file is not an image.'
+    });
+  }
+  const imageUrl = image.path;
     const product = new Product({
       title,
       imageUrl,
@@ -51,6 +61,7 @@ exports.getEditProduct = (req, res, next) => {
             path: "/admin/products",
             editing: editMode,
             product: product,
+            errorMessage: "",
           });
         })
         .catch((err) => {
@@ -73,9 +84,13 @@ exports.postEditProduct = (req, res, next) => {
         return res.redirect("/");
       }
       product.title = title;
-      product.imageUrl = imageUrl;
       product.description = description;
       product.price = price;
+      const image = req.file;
+      if (image) {
+         product.imageUrl = image.path;
+      }
+           
       return product.save().then((result) => {
         console.log("product updated");
         res.redirect("/admin/products");
