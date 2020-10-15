@@ -236,9 +236,29 @@ exports.getInvoice = (req, res, next) => {
 };
 
 exports.getCheckout = (req, res, next) => {
+    req.user
+      .populate("cart.items.productId")
+      .execPopulate()
+      .then((user) => {
+        const products = user.cart.items;
+        let total = 0;
+        products.forEach(p => {
+          total += p.quantity * p.productId.price;
+        })
         res.render("shop/checkout", {
           pageTitle: "Checkout",
           path: "/checkout",
           isAuthenticated: req.session.user,
+          products: products,
+          totalSum: total,
         });
+        return order.save();
+      })
+      .catch((err) => {
+        console.log(err);
+        const error = new Error(err);
+        err.httpStatusCode = 500;
+        return next(error);
+      });
+
 };
