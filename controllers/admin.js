@@ -26,8 +26,12 @@ exports.postAddProduct = (req, res, next) => {
       console.log(result)
       res.redirect('/admin/products')
     })
-  .catch(err => console.log(err))
-    
+    .catch(err => {
+      console.log(err);
+      const error = new Error(err);
+      err.httpStatusCode = 500;
+      return next(error);
+  })
 }
 
 exports.getEditProduct = (req, res, next) => {
@@ -51,6 +55,9 @@ exports.getEditProduct = (req, res, next) => {
         })
         .catch((err) => {
           console.log(err);
+          const error = new Error(err);
+          err.httpStatusCode = 500;
+          return next(error);
         });
 };
 exports.postEditProduct = (req, res, next) => {
@@ -61,7 +68,7 @@ exports.postEditProduct = (req, res, next) => {
       const description = req.body.description;
 
   Product.findById(prodId)
-    .then(product => {
+    .then((product) => {
       if (product.userId.toString() !== req.user._id.toString()) {
         return res.redirect("/");
       }
@@ -73,26 +80,33 @@ exports.postEditProduct = (req, res, next) => {
         console.log("product updated");
         res.redirect("/admin/products");
       });
-  })
-
-      .catch((err) => {
-        console.log(err);
-      });
+    })
+    .catch((err) => {
+      console.log(err);
+      const error = new Error(err);
+      err.httpStatusCode = 500;
+      return next(error);
+    });
       
 }
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
   Product.deleteOne({ _id: prodId, userId: req.user._id })
-             .then((result) => {
-               console.log("destroyed product");
-               res.redirect("/admin/products");
-             })
-             .catch((err) => console.log(err));
+    .then((result) => {
+      console.log("destroyed product");
+      res.redirect("/admin/products");
+    })
+    .catch((err) => {
+      console.log(err);
+      const error = new Error(err);
+      err.httpStatusCode = 500;
+      return next(error);
+    });
   
 };
 exports.getProducts = (req, res, next) => {
   Product.find({
-    userId: req.user._id
+    userId: req.user._id,
   })
     //.select('title price -_id')
     //.populate('userId', 'name')
@@ -105,5 +119,8 @@ exports.getProducts = (req, res, next) => {
     })
     .catch((err) => {
       console.log(err);
+      const error = new Error(err);
+      err.httpStatusCode = 500;
+      return next(error);
     });
 };

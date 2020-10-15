@@ -74,6 +74,8 @@ app.use((req, res, next) => {
 
 })
 
+
+
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn;
   res.locals.csrfToken = req.csrfToken();
@@ -88,6 +90,11 @@ app.use("/500", errorController.get500);
 
 //for 404 page
 app.use('/', errorController.get404);
+
+app.use((error, req, res, next) => {
+  //res.status(error.httpStatus).render(...);
+  res.redirect('/500')
+});
 
 mongoose
   .connect(MONGODB_URI + "?retryWrites=true&w=majority", {
