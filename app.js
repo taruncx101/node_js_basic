@@ -58,6 +58,13 @@ app.use(flash());
 //     })
 //     .catch((err) => console.log(err));
 // })
+
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
+
 app.use((req, res, next) => {
   if (!req.session.user) { 
     return next();
@@ -69,17 +76,9 @@ app.use((req, res, next) => {
     })
     .catch((err) => {
              console.log(err);
-             throw new Error(err); 
+             next(new Error(err)); 
     } );
 
-})
-
-
-
-app.use((req, res, next) => {
-  res.locals.isAuthenticated = req.session.isLoggedIn;
-  res.locals.csrfToken = req.csrfToken();
-  next();
 })
 
 app.use('/admin', adminRoutes);
@@ -93,7 +92,11 @@ app.use('/', errorController.get404);
 
 app.use((error, req, res, next) => {
   //res.status(error.httpStatus).render(...);
-  res.redirect('/500')
+  // res.redirect('/500')
+      res.status(500).render("500", {
+        pageTitle: "Error!",
+        path: "/500",
+      });
 });
 
 mongoose
