@@ -56,6 +56,7 @@ app.use(
 );
 
 app.use(express.static(path.join(rootDir, 'public')))
+app.use('/images', express.static(path.join(rootDir, "images")));
 
 app.use(
   session({

@@ -23,7 +23,7 @@ exports.postAddProduct = (req, res, next) => {
       errorMessage: 'Attached file is not an image.'
     });
   }
-  const imageUrl = image.path;
+  const imageUrl = "/" + image.path;
     const product = new Product({
       title,
       imageUrl,
@@ -88,7 +88,7 @@ exports.postEditProduct = (req, res, next) => {
       product.price = price;
       const image = req.file;
       if (image) {
-         product.imageUrl = image.path;
+         product.imageUrl = '/'+image.path;
       }
            
       return product.save().then((result) => {
